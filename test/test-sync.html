@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>baseJS-runtime同步测试</title>
+    <script type="text/javascript" src="../modJS-sync.js"></script>
+    <script type="text/javascript" src="lib/qunit-1.11.0.js"></script>
+    <script type="text/javascript" src="lib/user_action.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/qunit-1.11.0.css">
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<script>
+module("同步");
+define('module0', function(require, exports, module) {
+    exports.name = 'module0';
+    exports.add = function(x, y) {
+        return x + y;
+    }
+});
+
+define('module1', {
+    name : 'module1',
+    id : 0
+});
+
+define('module2-0', function(require, exports, module) {
+    exports.name = 'module2-0';
+    var module = require('module2-1');
+    exports.value = module.value;
+
+});
+
+define('module2-1', function(require, exports, module) {
+    var module = require('module2-2');
+    exports.value = module.value;
+
+});
+
+define('module2-2', function(require, exports, module) {
+    var module = require('module2-0');
+    exports.value = module.name;
+
+});
+
+define('module3', function(require, exports, module) {
+    return {
+        name : 'module3',
+        add : function(x, y) {
+            return x + y;
+        }
+    }
+});
+
+define('module4', function(require, exports, module) {
+    module.exports =  {
+        name : 'module4',
+        add : function(x, y) {
+            return x + y;
+        }
+    }
+});
+
+test('简单的模块定义和调用', function() {
+    var module = require('module0');
+    equal(module.name, 'module0', '模块属性正确');
+    equal(module.add(1,2), 3, '模块方法正确');
+});
+
+test('键值对的模块定义和调用', function() {
+    var module = require('module1');
+    equal(module.name, 'module1', '模块属性正确');
+    equal(module.id, 0, '模块属性正确');
+});
+
+test('具有循环依赖的模块调用', function() {
+    var module = require('module2-0');
+    equal(module.value, 'module2-0', '模块属性正确');
+});
+
+test('通过return的方式返回exports', function() {
+    var module = require('module3');
+    equal(module.name, 'module3', '模块属性正确');
+    equal(module.add(1,2), 3, '模块方法正确');
+});
+
+test('将module.exports指向新的引用', function() {
+    var module = require('module4');
+    equal(module.name, 'module4', '模块属性正确');
+    equal(module.add(1,2), 3, '模块方法正确');
+});
+
+</script>
+</body>
+</html>
