@@ -34,14 +34,14 @@ var require, define;
             var i, l = o.length;
             for(i = 0; i < l; i++) {
                 if(fn.call(o[i], o[i], i) === false) {
-                    return;
+                    return false;
                 }
             }
         } else {
             for(var i in o) {
                 if(hasProp(o, i)) {
                     if(fn.call(o[i], o[i], i) === false) {
-                        return;
+                        return false;
                     }
                 }
             }
@@ -68,9 +68,9 @@ var require, define;
         var mod = modules[id];
         if(!mod){
             mod = modules[id] = {
-                id: id, 
-                status: 0,
-                deps: asyncResources[id] ? asyncResources[id].deps : [] 
+                'id': id,
+                'status': 0,
+                'deps': asyncResources[id] ? asyncResources[id]['deps'] : []
             };
         }
         return mod;
@@ -119,7 +119,6 @@ var require, define;
 
     //初始化模块
     function exec(mod) {
-        var msg;
         if (mod.status != STATUS_EXECUTING && mod.status != STATUS_EXECUTED) {
             var exp = mod.exports = {}, fac = mod.factory;
             if (isFunction(fac)) {
