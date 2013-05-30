@@ -1,18 +1,16 @@
 #modJS
 
 
-## Why
+## 为什么
 
-
-## Restrictions
-
-## Download
+## 下载
 
 [Latest release](https://github.com/walterShen/modJS/raw/master/modJS.js)
 
-## Usage
+## 使用
 
-## Related
+## 相关项目
 
-[fis](https://github.com/fouber/fis)
-[fis-modular-reqlang](https://github.com/fouber/fis-modular-reqlang)
+自动化框架：[fis](https://github.com/fouber/fis)
+
+自动添加define插件：[fis-modular-reqlang](https://github.com/fouber/fis-modular-reqlang)
