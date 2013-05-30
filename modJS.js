@@ -76,37 +76,27 @@ var require, define;
         return mod;
     }
 
-    function loadModule(mod, track){
+    //检查模块依赖是否加载完成，如果未完成则触发加载
+    function check(mod, track) {
         if (isString(mod)) {
             mod = get(mod);
         }
-        if(mod.status == 0){//加载模块
-            mod.status = STATUS_FETCHING;
-            inject(mod.id);
+        if(mod.status == STATUS_EXECUTED){
+            return true;
         }
-        track = track || [];
-        if(mod.id){
-            track.push(mod.id);
-        }
-        forEach(mod.deps, function(id){
-            if(indexOf(track, id) < 0){//防止循环加载
-                loadModule(id, track);//递归加载依赖
-            }
-        });
-    }
 
-    //检查模块依赖是否加载完成，如果未完成则触发加载
-    function check(mod, track) {
         var flag = true;
         track = track || [];
         if(mod.id){
             track.push(mod.id);
         }
-        if(mod.status < STATUS_SAVED){
-            return false;
-        }
-        if(mod.status > STATUS_EXECUTING){
-            return true;
+
+        if(mod.status == 0){//加载模块
+            mod.status = STATUS_FETCHING;
+            inject(mod.id);
+            flag = false;
+        }else if(mod.status == STATUS_FETCHING){
+            flag = false;
         }
         forEach(mod.deps, function(id){
             if(indexOf(track, id) < 0){//避免循环调用
@@ -176,13 +166,16 @@ var require, define;
         return exec(mod);
     }
 
+    define = function (name, factory) {
+        var mod = get(name);
+        mod.factory = factory;
+        mod.status = STATUS_SAVED;
+    };
+
     require.async = function(deps, callback){
-        if (isString) {
-            deps = [deps];
-        }
         var asyncModule = {
             factory: callback,
-            deps: deps,
+            deps: isString(deps) ? [deps] : deps,
             async: true,
             status: STATUS_SAVED
         };
@@ -191,29 +184,21 @@ var require, define;
             exec(asyncModule);
         }else{
             asyncCallbacks.push(asyncModule);
-            loadModule(asyncModule);
         }
     }
 
-    define = function (name, factory) {
-        var mod = get(name);
-        mod.factory = factory;
-        mod.status = STATUS_SAVED;
-    };
-
     require.resourceMap = function(obj) {
-        if(obj.res){
-            forEach(obj.res, function(value, key){
+        if(obj['res']){
+            forEach(obj['res'], function(value, key){
                 asyncResources[key] = value;
             })
         }
-        if(obj.pkg){
-            forEach(obj.pkg, function(value, key){
+        if(obj['pkg']){
+            forEach(obj['pkg'], function(value, key){
                 asyncMap[key] = value;
             })
         }
     };
-
 
     define.amd = {
         'jQuery': true,
