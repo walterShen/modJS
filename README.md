@@ -3,7 +3,7 @@
 
 ## 简介
 
-modJS 是 FIS(前端集成解决方案)的前端框架，主要用于模块管理和加载，适用于线上运行时，具有代码精简、使用简单、运行高性能的特点。
+modJS 是 [FIS](https://github.com/fouber/fis)(前端集成解决方案)的前端框架，主要用于模块管理和加载，适用于线上运行时，具有代码精简、使用简单、运行高性能的特点。
 
 ## 下载
 
@@ -46,6 +46,6 @@ modJS 是 FIS(前端集成解决方案)的前端框架，主要用于模块管�
 
 ## 相关项目
 
-自动化框架：[fis](https://github.com/fouber/fis)
+前端集成解决方案：[FIS](https://github.com/fouber/fis)
 
 自动添加define插件：[fis-modular-reqlang](https://github.com/fouber/fis-modular-reqlang)
