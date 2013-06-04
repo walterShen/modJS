@@ -40,6 +40,41 @@ modJS 是 [FIS](https://github.com/fouber/fis)(前端集成解决方案)的前�
   使用require.async获取的模块不会被发布工具安排在预加载中，因此在完成回调之前require将会抛出模块未定义错误。
 
 
+## 说明
+
+**循环引用**
+
+modJS解决循环依赖的方式是在造成循环依赖的 require 之前把需要的东西exports出去
+
+**例如:**
+
+**a.js:**
+
+	console.log('a starting');
+	exports.done = false;
+	var b = require('./b.js');
+	console.log('in a, b.done =' + b.done);
+	exports.done = true;
+	console.log('a done');
+
+**b.js:**
+
+	console.log('b starting');
+	exports.done = false;
+	var a = require('./a.js');
+	console.log('in b, a.done =' + a.done);
+	exports.done = true;
+	console.log('b done');
+
+**main.js:**
+
+	console.log('main starting');
+	var a = require('./a.js');
+	var b = require('./b.js');
+	console.log('in main, a.done=' + a.done + ', b.done=' + b.done);
+
+如果在加载a的过程中，有其他的代码（假设为b）require a.js 的话，那么b可以从cache中直接取到a的module，从而不会引起重复加载的死循环。但带来的代价就是在load过程中，b看到的是不完整的a。
+
 
 
 
